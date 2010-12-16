@@ -4,7 +4,8 @@
   (:use     [clojure.contrib.zip-filter.xml]
             [hiccup.core]
             [compojure.core]
-            [ring.adapter.jetty]))
+            [ring.adapter.jetty]
+            [clj-time.format]))
 
 (def url "http://finnkino.fi/xml/Schedule/?area=1002&dt=16.12.2010")
 
@@ -18,6 +19,9 @@
        :time    (xml1-> show :dttmShowStart text)
        :image   (xml1-> show :Images :EventLargeImagePortrait text)})
     (xml-> xz :Shows :Show)))
+
+; To parse the starting times...
+; (map (fn [{time :time}] (unparse (formatters :hour-minute) (parse time)))   (get-shows movies))
 
 (def render-shows
   [:ul
