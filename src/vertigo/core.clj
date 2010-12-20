@@ -18,7 +18,7 @@
          [:tr
            [:td [:img {:src image}]]
            [:td title]
-           [:td theatre "BOOM"]
+           [:td theatre]
            [:td genres]])])
 
 (defn shows [shows]
