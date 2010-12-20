@@ -10,16 +10,16 @@
 
 (defn list-shows [shows]
   [:table
-    (map 
-      (fn [{title   :title
-            theatre :theatre
-            time    :time
-            image   :image}]
-        [:tr
-          [:td [:img {:src image}]]
-          [:td title]
-          [:td theatre]])
-      shows)])
+    (for [{genres  :genres
+           title   :title
+           theatre :theatre
+           image   :image}
+           shows]
+         [:tr
+           [:td [:img {:src image}]]
+           [:td title]
+           [:td theatre "BOOM"]
+           [:td genres]])])
 
 (defn shows [shows]
   (layout (list-shows shows)))
@@ -33,19 +33,24 @@
             [clojure.string :only (split)]
             [clj-time.format]))
 
+(defrecord Show [title
+                 theatre
+                 time
+                 genres
+                 image])
+
 (def url "http://finnkino.fi/xml/Schedule/?area=1002&dt=16.12.2010")
 
 (def movies (zip/xml-zip (xml/parse url)))
 
 (defn get-shows [xz] 
-  (map
-    (fn [show]
-      {:title   (xml1-> show :OriginalTitle text)
-       :theatre (xml1-> show :TheatreAndAuditorium text)
-       :time    (xml1-> show :dttmShowStart text)
-       :genres  (into #{} (split (xml1-> show :Genres text) #", "))
-       :image   (xml1-> show :Images :EventLargeImagePortrait text)})
-    (xml-> xz :Shows :Show)))
+  (for [show (xml-> xz :Shows :Show)]
+    (Show.
+      (xml1-> show :OriginalTitle text)
+      (xml1-> show :TheatreAndAuditorium text)
+      (xml1-> show :dttmShowStart text)
+      (into #{} (split (xml1-> show :Genres text) #", "))
+      (xml1-> show :Images :EventLargeImagePortrait text))))
 
 ; To parse the starting times...
 ; (map (fn [{time :time}] (unparse (formatters :hour-minute) (parse time)))   (get-shows movies))
