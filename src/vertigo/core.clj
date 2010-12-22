@@ -31,7 +31,8 @@
             [compojure.core]
             [ring.adapter.jetty]
             [clojure.string :only (split)]
-            [clj-time.format]))
+            [clj-time.format]
+            [clj-time.core :only (now)]))
 
 (defrecord Show [title
                  theatre
@@ -39,7 +40,10 @@
                  genres
                  image])
 
-(def url "http://finnkino.fi/xml/Schedule/?area=1002&dt=16.12.2010")
+(def finnish-date-format (formatter "dd.MM.yyyy"))
+
+(def url (str "http://finnkino.fi/xml/Schedule/?area=1002&dt="
+              (unparse finnish-date-format (now))))
 
 (def movies (zip/xml-zip (xml/parse url)))
 
