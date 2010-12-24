@@ -10,16 +10,10 @@
 
 (defn list-shows [shows]
   [:table
-    (for [{genres  :genres
-           title   :title
-           theatre :theatre
-           image   :image}
-           shows]
-         [:tr
-           [:td [:img {:src image}]]
-           [:td title]
-           [:td theatre]
-           [:td genres]])])
+    (for [day shows]
+      [:tr
+        [:td (:time (first (:comedy day)))]
+        [:td (map :title (:comedy day))]])])
 
 (defn shows [shows]
   (layout (list-shows shows)))
@@ -40,14 +34,17 @@
                  genres
                  image])
 
-(def finnish-date-format (formatter "dd.MM.yyyy"))
+(defn group-by-genre [shows]
+  (group-by
+    (fn [{genres :genres}]
+      (condp some genres
+        #{"Komedia"} :comedy
+        #{"Draama"} :drama
+        #{"Toiminta"} :action
+        :other))
+    shows))
 
-(def url (str "http://finnkino.fi/xml/Schedule/?area=1002&dt="
-              (unparse finnish-date-format (now))))
-
-(def movies (zip/xml-zip (xml/parse url)))
-
-(defn get-shows [xz] 
+(defn parse-shows [xz] 
   (for [show (xml-> xz :Shows :Show)]
     (Show.
       (xml1-> show :OriginalTitle text)
@@ -56,11 +53,22 @@
       (into #{} (split (xml1-> show :Genres text) #", "))
       (xml1-> show :Images :EventLargeImagePortrait text))))
 
-; To parse the starting times...
-; (map (fn [{time :time}] (unparse (formatters :hour-minute) (parse time)))   (get-shows movies))
+(def finnish-date-format (formatter "dd.MM.yyyy"))
+
+(def week-of-shows
+  (pmap
+    parse-shows
+    (map
+      #(zip/xml-zip (xml/parse (str "http://finnkino.fi/xml/Schedule/?area=1002&dt=" (unparse finnish-date-format %))))
+      (for [day (range 7)]
+        (.plusDays (now) day)))))
+
+(def week-of-shows-grouped-by-genre
+  (map group-by-genre (filter not-empty week-of-shows)))
+
 (defroutes handler
   (GET "/" []
-    (views/shows (get-shows movies))))
+    (views/shows week-of-shows-grouped-by-genre)))
 
 (run-jetty handler {:port 8080 :join? false})
 
