@@ -19,13 +19,14 @@
       [:th "Action"]
       [:th "Drama"]
       [:th "Others"]]
-    (for [[day genres] shows]
+    (for [{date           :date
+           shows-by-genre :shows-by-genre} shows]
       [:tr
-        [:td day]
-        [:td (map render-show (:comedy genres))]
-        [:td (map render-show (:action genres))]
-        [:td (map render-show (:drama genres))]
-        [:td (map render-show (:other genres))]])])
+        [:td date]
+        [:td (map render-show (:comedy shows-by-genre))]
+        [:td (map render-show (:action shows-by-genre))]
+        [:td (map render-show (:drama shows-by-genre))]
+        [:td (map render-show (:other shows-by-genre))]])])
 
 (defn calendar [shows]
   (layout (show-table shows)))
@@ -40,7 +41,7 @@
             [clj-time.format]
             [clj-time.core :only (now)]))
 
-(defrecord Show [id
+(defrecord Show [event-id
                  title
                  theatre
                  genres
@@ -73,13 +74,35 @@
       (let [new-shows (parse-shows-and-group-by-genre
                         (zip/xml-zip
                           (xml/parse
-                            (str "http://finnkino.fi/xml/Schedule/?area=1002&dt="
-                                 formatted-date))))]
-        [formatted-date (get (swap! shows-db assoc formatted-date new-shows) formatted-date)]))))
+                            (str
+                              "http://finnkino.fi/xml/Schedule/?area=1002&dt="
+                              formatted-date))))]
+        {:date           formatted-date
+         :shows-by-genre (get
+                           (swap! shows-db assoc
+                                             formatted-date
+                                             new-shows)
+                           formatted-date)}))))
 
 (defn retrieve-shows-for-whole-week []
   (let [dates (take 7 (iterate #(.plusDays % 1) (now)))]
     (map retrieve-shows-by-date dates)))
+
+(def events-db (atom {}))
+
+(defn retrieve-event [event-id]
+  (let [cached-event (get @events-db event-id)]
+    (if cached-event
+      {:event-id event-id
+       :event    cached-event}
+      (let [new-event (slurp
+                        (str
+                          "http://finnkino.fi/xml/Events/?eventId="
+                          event-id))]
+        {:event-id event-id
+         :event    (get
+                     (swap! events-db assoc event-id new-event)
+                     event-id)}))))
 
 (defroutes handler
   (GET "/" []
