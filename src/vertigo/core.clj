@@ -40,15 +40,18 @@
             [clj-time.format]
             [clj-time.core :only (now)]))
 
-(defrecord Show [title
+(defrecord Show [id
+                 title
                  theatre
                  genres
                  image])
+
 (def shows-db (atom {}))
 
 (defn parse-shows-and-group-by-genre [xz]
   (let [shows (for [show (xml-> xz :Shows :Show)]
           (Show.
+            (xml1-> show :EventId text)
             (xml1-> show :OriginalTitle text)
             (xml1-> show :TheatreAndAuditorium text)
             (into #{} (split (xml1-> show :Genres text) #", "))
