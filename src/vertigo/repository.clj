@@ -1,4 +1,5 @@
-(ns vertigo.repository)
+(ns vertigo.repository
+  (:require [vertigo.common :as common]))
 
 (defn save-movie [movie])
 
@@ -6,11 +7,10 @@
 
 (def db (atom {}))
 
-(defn save-movies [movies]
-  (swap! db assoc (:date     movies)
-                  (:by-genre movies)))
+(defn save-movies [date movies]
+  (swap! db assoc (common/format-date date) movies))
 
 (defn retrieve-movies [date]
-  {:date     (unparse (formatter "dd.MM.yyyy") date)
-   :by-genre (get @db :date)})
+  {:date     (common/format-date date)
+   :by-genre (get @db (common/format-date date))})
 

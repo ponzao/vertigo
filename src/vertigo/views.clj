@@ -22,7 +22,7 @@
       [:th "Thriller/Horror"]
       [:th "Others"]]
     (for [{date      :date
-           by-genres :by-genre} movies]
+           by-genre  :by-genre} movies]
       [:tr
         [:td date]
         [:td (map render-movie (:comedy by-genre))]
@@ -34,3 +34,5 @@
 (defn movies [movies]
   (layout (movies-table movies)))
 
+(defn movie [id]
+)

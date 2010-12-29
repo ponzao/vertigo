@@ -1,4 +1,4 @@
-(ns finnkino
+(ns vertigo.finnkino
   (:require [vertigo.common :as common]))
 
 (defn retrieve-movies [date]
