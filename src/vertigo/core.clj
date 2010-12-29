@@ -14,6 +14,7 @@
                  theatre
                  genres
                  image])
+
 (defn retrieve-shows-by-date [date]
   (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)
         cached-shows   (get @shows-db formatted-date)]
