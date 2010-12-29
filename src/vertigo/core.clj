@@ -1,7 +1,5 @@
 (ns vertigo.core
-  (:require [clojure.xml :as xml]
-            [clojure.zip :as zip]
-            [vertigo.views :as views])
+  (:require [vertigo.views :as views])
   (:use     [clojure.contrib.zip-filter.xml]
             [compojure.core]
             [ring.adapter.jetty]
