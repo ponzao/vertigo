@@ -4,7 +4,7 @@
   (:use     [clojure.contrib.zip-filter.xml]
             [clojure.string :only (split)])))
 
-(defn movies-by-genre [xz]
+(defn movies-by-genre [s]
   (group-by
     (fn [{genres :genres}]
       (condp some genres
@@ -14,11 +14,12 @@
         #{"Draama" "Romantiikka"} :drama-romance
         #{"Jännitys" "Kauhu"} :thriller-horror
         :other))
-    (for [movie (xml-> xz :Shows :Show)]
-          (Movie.
-            (xml1-> movie :EventID text)
-            (xml1-> movie :OriginalTitle text)
-            (xml1-> movie :TheatreAndAuditorium text)
-            (into #{} (split (xml1-> movie :Genres text) #", "))
-            (xml1-> movie :Images :EventLargeImagePortrait text)))))
+    (let [xz (zip/xml-zip (xml/parse (java.io.ByteArrayInputStream. (.getBytes s))))]
+      (for [movie (xml-> xz :Shows :Show)]
+            (Movie.
+              (xml1-> movie :EventID text)
+              (xml1-> movie :OriginalTitle text)
+              (xml1-> movie :TheatreAndAuditorium text)
+              (into #{} (split (xml1-> movie :Genres text) #", "))
+              (xml1-> movie :Images :EventLargeImagePortrait text))))))
 

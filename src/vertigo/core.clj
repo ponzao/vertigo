@@ -15,17 +15,9 @@
                  genres
                  image])
 
-(defn retrieve-shows-by-date [date]
-  (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)
-        cached-shows   (get @shows-db formatted-date)]
-    {:date           formatted-date
-     :shows-by-genre cached-shows}))
-
 (defn apply-on-whole-week [f]
   (let [dates (take 7 (iterate #(.plusDays % 1) (now)))]
     (map f dates)))
-
-(def events-db (atom {}))
 
 (defn retrieve-event [event-id]
   (let [cached-event (get @events-db event-id)]
@@ -55,17 +47,10 @@
     (retrieve-all-distinct-event-ids-for-stored-shows)))
 
 (defn retrieve-and-store-shows-from-finnkino [date]
-  (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)
-        new-shows
-          (parse-shows-and-group-by-genre
-            (zip/xml-zip
-              (xml/parse
-                (str
-                  "http://finnkino.fi/xml/Schedule/?area=1002&dt="
-                  formatted-date))))]
-    (swap! shows-db assoc
-                      formatted-date
-                      new-shows)))
+  (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)]
+    (slurp (str
+              "http://finnkino.fi/xml/Schedule/?area=1002&dt="
+              formatted-date)))
 
 (defroutes handler
   (GET "/" []
