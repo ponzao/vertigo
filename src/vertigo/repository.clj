@@ -4,10 +4,13 @@
 
 (defn retrieve-movie [id])
 
+(def db (atom {}))
+
 (defn save-movies [movies]
-  (conj [] movies))
+  (swap! db assoc (:date     movies)
+                  (:by-genre movies)))
 
 (defn retrieve-movies [date]
   {:date     (unparse (formatter "dd.MM.yyyy") date)
-   :by-genre []})
+   :by-genre (get @db :date)})
 
