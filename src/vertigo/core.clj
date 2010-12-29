@@ -1,5 +1,6 @@
 (ns views
-  (:use [hiccup.core]))
+  (:use [hiccup.core]
+        [hiccup.page-helpers]))
 
 (defn layout [content]
   (html [:html
@@ -9,7 +10,7 @@
               content]]]))
 
 (defn render-show [show]
-  [:div (:title show)])
+  [:div (link-to (str "/shows/" (:event-id show)) (:title show))])
 
 (defn show-table [shows]
   [:table
@@ -52,7 +53,7 @@
 (defn parse-shows-and-group-by-genre [xz]
   (let [shows (for [show (xml-> xz :Shows :Show)]
           (Show.
-            (xml1-> show :EventId text)
+            (xml1-> show :EventID text)
             (xml1-> show :OriginalTitle text)
             (xml1-> show :TheatreAndAuditorium text)
             (into #{} (split (xml1-> show :Genres text) #", "))
@@ -70,7 +71,8 @@
   (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)
         cached-shows   (get @shows-db formatted-date)]
     (if cached-shows
-      [formatted-date cached-shows]
+      {:date           formatted-date
+       :shows-by-genre cached-shows}
       (let [new-shows (parse-shows-and-group-by-genre
                         (zip/xml-zip
                           (xml/parse
