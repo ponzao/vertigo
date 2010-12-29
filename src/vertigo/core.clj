@@ -17,16 +17,18 @@
     [:tr
       [:th "Date"]
       [:th "Comedy"]
-      [:th "Action"]
-      [:th "Drama"]
+      [:th "Action/Adventure/Sci-fi/Fantasy"]
+      [:th "Drama/Romance"]
+      [:th "Thriller/Horror"]
       [:th "Others"]]
     (for [{date           :date
            shows-by-genre :shows-by-genre} shows]
       [:tr
         [:td date]
         [:td (map render-show (:comedy shows-by-genre))]
-        [:td (map render-show (:action shows-by-genre))]
-        [:td (map render-show (:drama shows-by-genre))]
+        [:td (map render-show (:action-adventure-scifi-fantasy shows-by-genre))]
+        [:td (map render-show (:drama-romance shows-by-genre))]
+        [:td (map render-show (:thriller-horror shows-by-genre))]
         [:td (map render-show (:other shows-by-genre))]])])
 
 (defn calendar [shows]
@@ -62,8 +64,10 @@
       (fn [{genres :genres}]
         (condp some genres
           #{"Komedia"} :comedy
-          #{"Draama"} :drama
-          #{"Toiminta"} :action
+          #{"Toiminta" "Seikkailu" "Sci-fi" "Fantasia"}
+            :action-adventure-scifi-fantasy
+          #{"Draama" "Romantiikka"} :drama-romance
+          #{"Jännitys" "Kauhu"} :thriller-horror
           :other))
       shows)))
 
@@ -93,6 +97,19 @@
                      (swap! events-db assoc event-id new-event)
                      event-id)}))))
 
+(defn retrieve-all-distinct-event-ids-for-stored-shows []
+  (distinct (map
+              :event-id
+              (flatten
+                (for [{shows :shows-by-genre}
+                        (apply-on-whole-week retrieve-shows-by-date)]
+                  (vals shows))))))
+
+(defn retrieve-all-events-for-stored-shows []
+  (map
+    retrieve-event
+    (retrieve-all-distinct-event-ids-for-stored-shows)))
+
 (defn retrieve-and-store-shows-from-finnkino [date]
   (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)
         new-shows
@@ -109,8 +126,14 @@
 (defroutes handler
   (GET "/" []
     (views/calendar (apply-on-whole-week retrieve-shows-by-date)))
+  (GET "/:id" [id]
+    (views/movie (retrieve-movie id))
   (GET "/execute-batch" []
-    (apply-on-whole-week retrieve-and-store-shows-from-finnkino)))
+    (if (and
+          (apply-on-whole-week retrieve-and-store-shows-from-finnkino)
+          (retrieve-all-events-for-stored-shows))
+      "success"
+      "failure")))
 
 (run-jetty handler {:port 8080 :join? false})
 
