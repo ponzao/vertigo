@@ -70,25 +70,12 @@
 (defn retrieve-shows-by-date [date]
   (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)
         cached-shows   (get @shows-db formatted-date)]
-    (if cached-shows
-      {:date           formatted-date
-       :shows-by-genre cached-shows}
-      (let [new-shows (parse-shows-and-group-by-genre
-                        (zip/xml-zip
-                          (xml/parse
-                            (str
-                              "http://finnkino.fi/xml/Schedule/?area=1002&dt="
-                              formatted-date))))]
-        {:date           formatted-date
-         :shows-by-genre (get
-                           (swap! shows-db assoc
-                                             formatted-date
-                                             new-shows)
-                           formatted-date)}))))
+    {:date           formatted-date
+     :shows-by-genre cached-shows}))
 
-(defn retrieve-shows-for-whole-week []
+(defn apply-on-whole-week [f]
   (let [dates (take 7 (iterate #(.plusDays % 1) (now)))]
-    (map retrieve-shows-by-date dates)))
+    (map f dates)))
 
 (def events-db (atom {}))
 
@@ -106,9 +93,24 @@
                      (swap! events-db assoc event-id new-event)
                      event-id)}))))
 
+(defn retrieve-and-store-shows-from-finnkino [date]
+  (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)
+        new-shows
+          (parse-shows-and-group-by-genre
+            (zip/xml-zip
+              (xml/parse
+                (str
+                  "http://finnkino.fi/xml/Schedule/?area=1002&dt="
+                  formatted-date))))]
+    (swap! shows-db assoc
+                      formatted-date
+                      new-shows)))
+
 (defroutes handler
   (GET "/" []
-    (views/calendar (retrieve-shows-for-whole-week))))
+    (views/calendar (apply-on-whole-week retrieve-shows-by-date)))
+  (GET "/execute-batch" []
+    (apply-on-whole-week retrieve-and-store-shows-from-finnkino)))
 
 (run-jetty handler {:port 8080 :join? false})
 
