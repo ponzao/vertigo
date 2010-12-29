@@ -1,39 +1,3 @@
-(ns views
-  (:use [hiccup.core]
-        [hiccup.page-helpers]))
-
-(defn layout [content]
-  (html [:html
-          [:head]
-          [:body
-            [:div#content
-              content]]]))
-
-(defn render-show [show]
-  [:div (link-to (str "/shows/" (:event-id show)) (:title show))])
-
-(defn show-table [shows]
-  [:table
-    [:tr
-      [:th "Date"]
-      [:th "Comedy"]
-      [:th "Action/Adventure/Sci-fi/Fantasy"]
-      [:th "Drama/Romance"]
-      [:th "Thriller/Horror"]
-      [:th "Others"]]
-    (for [{date           :date
-           shows-by-genre :shows-by-genre} shows]
-      [:tr
-        [:td date]
-        [:td (map render-show (:comedy shows-by-genre))]
-        [:td (map render-show (:action-adventure-scifi-fantasy shows-by-genre))]
-        [:td (map render-show (:drama-romance shows-by-genre))]
-        [:td (map render-show (:thriller-horror shows-by-genre))]
-        [:td (map render-show (:other shows-by-genre))]])])
-
-(defn calendar [shows]
-  (layout (show-table shows)))
-
 (ns vertigo.core
   (:require [clojure.xml :as xml]
             [clojure.zip :as zip])
