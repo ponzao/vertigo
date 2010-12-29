@@ -1,10 +1,7 @@
 (ns vertigo.core
   (:require [vertigo.views :as views])
-  (:use     [clojure.contrib.zip-filter.xml]
-            [compojure.core]
+  (:use     [compojure.core]
             [ring.adapter.jetty]
-            [clojure.string :only (split)]
-            [clj-time.format]
             [clj-time.core :only (now)]))
 
 (defrecord Movie [id
@@ -43,12 +40,6 @@
   (map
     retrieve-event
     (retrieve-all-distinct-event-ids-for-stored-shows)))
-
-(defn retrieve-and-store-shows-from-finnkino [date]
-  (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)]
-    (slurp (str
-              "http://finnkino.fi/xml/Schedule/?area=1002&dt="
-              formatted-date)))
 
 (defroutes handler
   (GET "/" []
