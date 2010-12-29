@@ -1,18 +1,16 @@
 (ns vertigo.core
-  (:require [vertigo.views :as views])
+  (:require [vertigo.views :as views]
+            [vertigo.common :as common]
+            [vertigo.repository :as repository]
+            [vertigo.batch :as batch])
   (:use     [compojure.core]
-            [ring.adapter.jetty]
-            [clj-time.core :only (now)]))
+            [ring.adapter.jetty]))
 
 (defrecord Movie [id
                  title
                  theatre
                  genres
                  image])
-
-(defn apply-on-whole-week [f]
-  (let [dates (take 7 (iterate #(.plusDays % 1) (now)))]
-    (map f dates)))
 
 (defn retrieve-all-distinct-event-ids-for-stored-shows []
   (distinct (map
@@ -29,15 +27,11 @@
 
 (defroutes handler
   (GET "/movies" [] 
-    (views/movies (apply-on-whole-week (repository/retrieve-movies))))
+    (views/movies (common/map-on-n-days (repository/retrieve-movies) 4)))
   (GET "/movies/:id" [id]
     (views/movie (retrieve-movie id)))
-  (GET "/execute-batch" []
-    (if (and
-          (apply-on-whole-week retrieve-and-store-shows-from-finnkino)
-          (retrieve-all-events-for-stored-shows))
-      "success"
-      "failure")))
+  (GET "/batch/movies" []
+    (batch/update-movies)))
 
 (run-jetty handler {:port 8080 :join? false})
 
