@@ -14,20 +14,6 @@
   (let [dates (take 7 (iterate #(.plusDays % 1) (now)))]
     (map f dates)))
 
-(defn retrieve-event [event-id]
-  (let [cached-event (get @events-db event-id)]
-    (if cached-event
-      {:event-id event-id
-       :event    cached-event}
-      (let [new-event (slurp
-                        (str
-                          "http://finnkino.fi/xml/Events/?eventId="
-                          event-id))]
-        {:event-id event-id
-         :event    (get
-                     (swap! events-db assoc event-id new-event)
-                     event-id)}))))
-
 (defn retrieve-all-distinct-event-ids-for-stored-shows []
   (distinct (map
               :event-id
@@ -42,10 +28,10 @@
     (retrieve-all-distinct-event-ids-for-stored-shows)))
 
 (defroutes handler
-  (GET "/" []
-    (views/calendar (apply-on-whole-week retrieve-shows-by-date)))
-  (GET "/:id" [id]
-    (views/movie (retrieve-movie id))
+  (GET "/movies" [] 
+    (views/movies (apply-on-whole-week (repository/retrieve-movies))))
+  (GET "/movies/:id" [id]
+    (views/movie (retrieve-movie id)))
   (GET "/execute-batch" []
     (if (and
           (apply-on-whole-week retrieve-and-store-shows-from-finnkino)

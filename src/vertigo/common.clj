@@ -3,3 +3,4 @@
 
 (defn format-date [date]
   (unparse (formatter "dd.MM.yyyy") date))
+
