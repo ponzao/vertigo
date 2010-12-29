@@ -1,4 +1,4 @@
-(ns views
+(ns vertigo.views
   (:use [hiccup.core]
         [hiccup.page-helpers]))
 
