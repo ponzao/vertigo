@@ -1,6 +1,7 @@
 (ns vertigo.core
   (:require [clojure.xml :as xml]
-            [clojure.zip :as zip])
+            [clojure.zip :as zip]
+            [vertigo.views :as views])
   (:use     [clojure.contrib.zip-filter.xml]
             [compojure.core]
             [ring.adapter.jetty]
@@ -8,33 +9,11 @@
             [clj-time.format]
             [clj-time.core :only (now)]))
 
-(defrecord Show [event-id
+(defrecord Movie [id
                  title
                  theatre
                  genres
                  image])
-
-(def shows-db (atom {}))
-
-(defn parse-shows-and-group-by-genre [xz]
-  (let [shows (for [show (xml-> xz :Shows :Show)]
-          (Show.
-            (xml1-> show :EventID text)
-            (xml1-> show :OriginalTitle text)
-            (xml1-> show :TheatreAndAuditorium text)
-            (into #{} (split (xml1-> show :Genres text) #", "))
-            (xml1-> show :Images :EventLargeImagePortrait text)))]
-    (group-by
-      (fn [{genres :genres}]
-        (condp some genres
-          #{"Komedia"} :comedy
-          #{"Toiminta" "Seikkailu" "Sci-fi" "Fantasia"}
-            :action-adventure-scifi-fantasy
-          #{"Draama" "Romantiikka"} :drama-romance
-          #{"Jännitys" "Kauhu"} :thriller-horror
-          :other))
-      shows)))
-
 (defn retrieve-shows-by-date [date]
   (let [formatted-date (unparse (formatter "dd.MM.yyyy") date)
         cached-shows   (get @shows-db formatted-date)]
