@@ -13,8 +13,10 @@
 
 (defn- render-movie [movie]
   ; FIXME: This is not the way to do it, is it?
-  [:div (.replaceAll (:time movie) "\\d+-\\d+-\\d+T" "")
-  (link-to (str "/movies/" (:id movie)) (:title movie))])
+  [:div
+    [:span (.replaceAll (:time movie) "\\d+-\\d+-\\d+T" "")]
+    [:span (link-to (str "/movies/" (:id movie)) (:title movie))]
+    [:span (:genres movie)]])
 
 (defn- movies-table [movies]
   [:table
