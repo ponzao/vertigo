@@ -5,5 +5,6 @@
                  [hiccup "0.3.1"]
                  [compojure "0.5.3"]
                  [ring/ring-jetty-adapter "0.3.1"]
-                 [clj-time "0.2.0-SNAPSHOT"]])
+                 [clj-time "0.2.0-SNAPSHOT"]]
+  :dev-dependencies [[appengine-magic "0.3.2"]])
 

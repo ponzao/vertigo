@@ -3,8 +3,7 @@
             [vertigo.common :as common]
             [vertigo.repository :as repository]
             [vertigo.batch :as batch])
-  (:use     [compojure.core]
-            [ring.adapter.jetty]))
+  (:use     [compojure.core]))
 
 ;(defrecord Movie [id
 ;                 title
@@ -33,5 +32,5 @@
   (GET "/batch/movies" []
     (batch/update-movies)))
 
-(run-jetty handler {:port 8080 :join? false})
+(ae/def-appengine-app vertigo-app #'handler)
 
