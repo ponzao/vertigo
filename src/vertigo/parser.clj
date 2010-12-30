@@ -19,6 +19,7 @@
         {:id      (xml1-> movie :EventID text)
          :title   (xml1-> movie :OriginalTitle text)
          :theatre (xml1-> movie :TheatreAndAuditorium text)
+         :time    (xml1-> movie :dttmShowStart text)
          :genres  (into #{} (split (xml1-> movie :Genres text) #", "))
          :image   (xml1-> movie :Images :EventLargeImagePortrait text)}))))
 

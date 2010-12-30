@@ -1,16 +1,20 @@
 (ns vertigo.views
   (:use [hiccup.core]
-        [hiccup.page-helpers]))
+        [hiccup.page-helpers]
+        [clj-time.format]))
 
 (defn layout [content]
   (html [:html
-          [:head]
+          [:head
+            (include-css "style.css")]
           [:body
             [:div#content
               content]]]))
 
 (defn- render-movie [movie]
-  [:div (link-to (str "/movies/" (:id movie)) (:title movie))])
+  ; FIXME: This is not the way to do it, is it?
+  [:div (.replaceAll (:time movie) "\\d+-\\d+-\\d+T" "")
+  (link-to (str "/movies/" (:id movie)) (:title movie))])
 
 (defn- movies-table [movies]
   [:table

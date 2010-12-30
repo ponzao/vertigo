@@ -2,7 +2,8 @@
   (:require [vertigo.views :as views]
             [vertigo.common :as common]
             [vertigo.repository :as repository]
-            [vertigo.batch :as batch])
+            [vertigo.batch :as batch]
+            [appengine-magic.core :as ae])
   (:use     [compojure.core]))
 
 ;(defrecord Movie [id
