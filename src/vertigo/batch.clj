@@ -6,6 +6,7 @@
   (:use     [clj-time.core :only (now)]))
 
 (defn update-shows []
-  (repository/save-shows
-    (parser/parse-shows (finnkino/retrieve-shows (now)))))
+  (for [date (take 8 (iterate #(.plusDays % 1) (now)))]
+    (repository/save-shows
+      (parser/parse-shows (finnkino/retrieve-shows date)))))
 

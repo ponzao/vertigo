@@ -15,7 +15,7 @@
 
 (defn- render-show [show]
   [:div
-    [:span (link-to (str "/movies/" (:id show)) (:title show))]])
+    [:span (link-to (str "/movies/" (:event-id show)) (:title show))] (:time show)])
 
 (defn- shows-table [shows]
   [:table
@@ -34,8 +34,8 @@
                              (some #{"Toiminta" "Sci-fi" "Seikkailu" "Fantasia"} genres) :action
                              (some #{"Draama" "Romantiikka"} genres) :drama
                              :otherwise :other))
-                     (filter (fn [show] (= (common/format-date date)
-                                           "03.01.2011"))
+                     (filter (fn [show] (= (.toLocalDate date)
+                                           (.toLocalDate (parse (:time show)))))
                              shows))]
         [:tr
           [:td (common/format-date date)]

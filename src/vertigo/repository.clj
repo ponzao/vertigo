@@ -2,12 +2,13 @@
   (:require [vertigo.common :as common]
             [appengine-magic.services.datastore :as ds]))
 
-(ds/defentity Show [])
+(ds/defentity Show [^:key id])
 
 (defn save-shows [shows]
   (map
     (fn [show]
-      (ds/save! (merge (Show.) show)))
+      (let [id (str (:event-id show) (:time show))]
+        (ds/save! (merge (Show. id) show))))
     shows))
 
 (defn retrieve-shows []

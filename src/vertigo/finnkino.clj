@@ -3,6 +3,6 @@
 
 (defn retrieve-shows [date]
   (slurp (str
-            "http://finnkino.fi/xml/Schedule/?area=1002&dt="
+            "http://www.finnkino.fi/xml/Schedule/?area=1002&dt="
             (common/format-date date))))
 
