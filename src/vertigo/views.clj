@@ -17,6 +17,10 @@
   [:div
     [:span (link-to (str "/movies/" (:event-id show)) (:title show))] (:time show)])
 
+(defn- render-genres [coll genres]
+  (for [genre genres]
+    [:td (map render-show (genre coll))]))
+
 (defn- shows-table [shows]
   [:table
     [:tr
@@ -25,7 +29,7 @@
       [:th "Action/Adventure/Sci-fi/Fantasy"]
       [:th "Drama/Romance"]
       [:th "Others"]]
-    (for [date (take 4 (iterate #(.plusDays % 1) (now)))]
+    (for [date (take 7 (iterate #(.plusDays % 1) (now)))]
       (let [genres (group-by
                      (fn [{genres :genres}]
                        (cond (and (some #{"Komedia"} genres)
@@ -39,10 +43,8 @@
                              shows))]
         [:tr
           [:td (common/format-date date)]
-          [:td (map render-show (:comedy genres))]
-          [:td (map render-show (:action genres))]
-          [:td (map render-show (:drama genres))]
-          [:td (map render-show (:other genres))]]))])
+          (render-genres genres [:comedy :action :drama :other])]))])
+
 
 (defn shows [shows]
   (layout (shows-table shows)))
