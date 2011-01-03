@@ -31,7 +31,7 @@
                        (cond (and (some #{"Komedia"} genres)
                                   (some #{"Draama"} genres)) :drama
                              (some #{"Komedia"} genres) :comedy
-                             (some #{"Toiminta"} genres) :action
+                             (some #{"Toiminta" "Sci-fi" "Seikkailu" "Fantasia"} genres) :action
                              (some #{"Draama" "Romantiikka"} genres) :drama
                              :otherwise :other))
                      (filter (fn [show] (= (common/format-date date)
