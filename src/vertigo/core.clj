@@ -8,11 +8,9 @@
 
 (defroutes handler
   (GET "/movies" [] 
-    (views/movies (common/map-on-n-days repository/retrieve-movies 4)))
-  (GET "/movies/:id" [id]
-    (views/movie (repository/retrieve-movie id)))
-  (GET "/batch/movies" []
-    (batch/update-movies)))
+    (views/shows (repository/retrieve-shows)))
+  (GET "/batch/shows" []
+    (batch/update-shows)))
 
 (ae/def-appengine-app vertigo-app #'handler)
 
