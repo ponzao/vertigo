@@ -17,9 +17,9 @@
   [:div
     [:span (link-to (str "/movies/" (:event-id show)) (:title show))] (:time show)])
 
-(defn- render-genres [coll genres]
-  (for [genre genres]
-    [:td (map render-show (genre coll))]))
+(defn- render-genres [genres genre-names]
+  (for [genre-name genre-names]
+    [:td (map render-show (sort-by :time (genre-name genres)))]))
 
 (defn- shows-table [shows]
   [:table
