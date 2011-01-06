@@ -8,7 +8,7 @@
 
 (defroutes handler
   (GET "/movies" [] 
-    (views/shows (repository/retrieve-shows)))
+    (views/shows (repository/retrieve-dates-and-shows)))
   (GET "/batch/shows" []
     (batch/update-shows)))
 

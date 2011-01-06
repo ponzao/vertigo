@@ -14,12 +14,13 @@
               content]]]))
 
 (defn- render-show [show]
-  [:div
-    [:span (link-to (str "/movies/" (:event-id show)) (:title show))] (:time show)])
+  [:li (unparse (:hour-minute formatters) (parse (:time show)))
+       (link-to
+         (str "/movies/" (:event-id show)) 
+         (:title show))])
 
-(defn- render-genres [genres genre-names]
-  (for [genre-name genre-names]
-    [:td (map render-show (sort-by :time (genre-name genres)))]))
+(defn- render-shows [shows]
+  [:ul (map render-show shows)])
 
 (defn- shows-table [shows]
   [:table
@@ -28,23 +29,14 @@
       [:th "Comedy"]
       [:th "Action/Adventure/Sci-fi/Fantasy"]
       [:th "Drama/Romance"]
-      [:th "Others"]]
-    (for [date (take 7 (iterate #(.plusDays % 1) (now)))]
-      (let [genres (group-by
-                     (fn [{genres :genres}]
-                       (cond (and (some #{"Komedia"} genres)
-                                  (some #{"Draama"} genres)) :drama
-                             (some #{"Komedia"} genres) :comedy
-                             (some #{"Toiminta" "Sci-fi" "Seikkailu" "Fantasia"} genres) :action
-                             (some #{"Draama" "Romantiikka"} genres) :drama
-                             :otherwise :other))
-                     (filter (fn [show] (= (.toLocalDate date)
-                                           (.toLocalDate (parse (:time show)))))
-                             shows))]
-        [:tr
-          [:td (common/format-date date)]
-          (render-genres genres [:comedy :action :drama :other])]))])
-
+      [:th "Other"]]
+    (for [[day genres] shows]
+      [:tr
+        [:td day]
+        [:td (render-shows (:comedy genres))]
+        [:td (render-shows (:action genres))]
+        [:td (render-shows (:drama genres))]
+        [:td (render-shows (:other genres))]])])
 
 (defn shows [shows]
   (layout (shows-table shows)))
