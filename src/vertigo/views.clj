@@ -8,6 +8,8 @@
 (defn layout [content]
   (html [:html
           [:head
+            [:meta {:http-equiv "content-type"
+                    :content    "text/html; charset=utf-8"}]
             (include-css "style.css")]
           [:body
             [:div#content
