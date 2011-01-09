@@ -6,7 +6,7 @@
             [clj-time.format]))
 
 (defn parse-shows [s]
-  (let [xz (zip/xml-zip (xml/parse (java.io.ByteArrayInputStream. (.getBytes s))))]
+  (let [xz (zip/xml-zip (xml/parse (java.io.ByteArrayInputStream. (.getBytes s "UTF-8"))))]
     (for [show (xml-> xz :Shows :Show)]
       {:event-id (xml1-> show :EventID text)
        :title    (xml1-> show :OriginalTitle text)
