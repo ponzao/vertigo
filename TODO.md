@@ -1,4 +1,4 @@
 # TODO
-- Caching.
-- Group by date and then by genre.
-- Visualization.
+- styling
+- movie page
+- utf8
