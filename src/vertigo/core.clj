@@ -9,8 +9,12 @@
 (defroutes handler
   (GET "/movies" [] 
     (views/shows (repository/retrieve-dates-and-shows)))
+  (GET "/movies/:id" [id]
+    (views/movie (repository/retrieve-movie id)))
   (GET "/batch/shows" []
-    (batch/update-shows)))
+    (batch/update-shows))
+  (GET "/batch/movies" []
+    (batch/update-movies)))
 
 (ae/def-appengine-app vertigo-app #'handler)
 

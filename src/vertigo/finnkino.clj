@@ -6,3 +6,7 @@
             "http://www.finnkino.fi/xml/Schedule/?area=1002&dt="
             (common/format-date date))))
 
+(defn retrieve-movies []
+  (slurp (str
+            "http://www.finnkino.fi/xml/Events/")))
+

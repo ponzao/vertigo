@@ -6,6 +6,19 @@
 
 (ds/defentity Show [^:key id])
 
+(ds/defentity Movie [^:key id])
+
+(defn save-movies [movies]
+  (map
+    (fn [movie]
+      (ds/save!
+        (merge (Movie. nil)
+               (update-in movie [:synopsis] ds/as-text))))
+    movies))
+
+(defn retrieve-movie [id]
+  (ds/retrieve Movie id))
+
 (defn save-shows [shows]
   (map
     (fn [show]

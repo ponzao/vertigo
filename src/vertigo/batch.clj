@@ -10,3 +10,7 @@
     (repository/save-shows
       (parser/parse-shows (finnkino/retrieve-shows date)))))
 
+(defn update-movies []
+  (repository/save-movies 
+      (parser/parse-movies (finnkino/retrieve-movies))))
+

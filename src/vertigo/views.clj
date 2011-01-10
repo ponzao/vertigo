@@ -5,12 +5,12 @@
         [clj-time.core :only (now)]
         [clj-time.format]))
 
-(defn layout [content]
+(defn layout [& content]
   (html [:html
           [:head
             [:meta {:http-equiv "content-type"
                     :content    "text/html; charset=utf-8"}]
-            (include-css "style.css")]
+            (include-css "/style.css")]
           [:body
             [:div#content
               content]]]))
@@ -43,6 +43,42 @@
 (defn shows [shows]
   (layout (shows-table shows)))
 
-; TODO: Implement!
-(defn movie [id]
-)
+(defn movie [movie]
+  (layout
+    [:div
+      [:img {:src (:image movie)}]
+      [:h1 (:title movie)]
+      [:p  (.getValue (:synopsis movie))]
+      [:script {:src "http://widgets.twimg.com/j/2/widget.js"}]
+      [:script "new TWTR.Widget({
+                  version: 2,
+                  type: 'search',
+                  search: '" (:original-title movie) "',
+                  interval: 6000,
+                  title: '',
+                  subject: '',
+                  width: 250,
+                  height: 300,
+                  theme: {
+                    shell: {
+                      background: '#8ec1da',
+                      color: '#ffffff'
+                    },
+                    tweets: {
+                      background: '#ffffff',
+                      color: '#444444',
+                      links: '#1985b5'
+                    }
+                  },
+                  features: {
+                    scrollbar: false,
+                    loop: true,
+                    live: true,
+                    hashtags: true,
+                    timestamp: true,
+                    avatars: true,
+                    toptweets: true,
+                    behavior: 'default'
+                  }
+                }).render().start();"]]))
+
