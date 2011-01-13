@@ -13,7 +13,8 @@
   (let [xz (zip-string s)]
     (for [show (xml-> xz :Shows :Show)]
       {:event-id (xml1-> show :EventID text)
-       :title    (xml1-> show :OriginalTitle text)
+       :title    (xml1-> show :Title text)
+       :original-title (xml1-> show :OriginalTitle text)
        :theatre  (xml1-> show :TheatreAndAuditorium text)
        :time     (xml1-> show :dttmShowStart text)
        :day      (str (.toLocalDate (parse (xml1-> show :dttmShowStart text))))

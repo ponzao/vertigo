@@ -17,7 +17,9 @@
     movies))
 
 (defn retrieve-movie [id]
-  (ds/retrieve Movie id))
+  (merge (ds/query :kind Show
+                   :filter (= :event-id id)))
+          (ds/retrieve Movie id))
 
 (defn save-shows [shows]
   (map
