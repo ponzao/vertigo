@@ -49,6 +49,9 @@
       [:img {:src (:image movie)}]
       [:h1 (:title movie)]
       [:p  (.getValue (:synopsis movie))]
+      [:ul (for [{theatre :theatre time :time} (:shows movie)]
+             [:li [:span time]
+                  [:span theatre]])]
       [:script {:src "http://widgets.twimg.com/j/2/widget.js"}]
       [:script "new TWTR.Widget({
                   version: 2,
