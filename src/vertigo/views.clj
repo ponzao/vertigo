@@ -3,13 +3,13 @@
         [hiccup.page-helpers]))
 
 (defn layout [& content]
-  (html [:html
-          [:head
-            [:meta {:http-equiv "content-type"
-                    :content    "text/html; charset=utf-8"}]
-            (include-css "/style.css")]
-          [:body
-            [:div#content content]]]))
+  (html (list [:!DOCTYPE {:html ""}] ; FIXME This is broken!
+              [:html {:lang "fi"}
+                [:head
+                  [:meta {:charset "utf-8"}]
+                  (include-css "/style.css")]
+                [:body
+                  [:div#content content]]])))
 
 (defn movie-calendar [movies-by-date]
   [:table
