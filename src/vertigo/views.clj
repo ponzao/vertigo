@@ -11,6 +11,26 @@
                 [:body
                   [:div#content content]]])))
 
+(defn- between? [obj start end]
+  (and (<= start obj)
+       (<= obj   end)))
+
+(defn- render-in-time-range [movies start end]
+  [:ul
+    (for [movie movies
+           :when (-> (:time movie)
+                     (.getHourOfDay)
+                     (between? start end))]
+      [:li (:time movie) (:title movie)])])
+
+(defn- render-all-in-time-range [genres start end]
+  (list
+    [:td (render-in-time-range (:comedy genres) start end)]
+    [:td (render-in-time-range (:action genres) start end)]
+    [:td (render-in-time-range (:drama genres) start end)]
+    [:td (render-in-time-range (:others genres) start end)]))
+
+
 (defn movie-calendar [movies-by-date]
   [:table
     [:tr
@@ -19,128 +39,33 @@
       [:th "toiminta"]
       [:th "draama"]
       [:th "muut"]]
-    [:tr
-      [:td "torstai 24.2.2011"]
-      [:td "10.00"]
-      [:td]
-      [:td]
-      [:td]
-    [:tr
-      [:td]
-      [:td "10.45 lil fuckers"]
-      [:td [:div "12.15 inception"]
-           [:div "14.30 turisti"]]
-      [:td "10.00 kings speech"]
-      [:td]]
-    [:tr
-      [:td]
-      [:td "15.00"]
-      [:td]
-      [:td]
-      [:td]]
-    [:tr
-      [:td]
-      [:td]
-      [:td]
-      [:td "15.30 ojos de julia"]
-      [:td]]
-    [:tr
-      [:td]
-      [:td "17.00"]
-      [:td]
-      [:td]
-      [:td]]
-    [:tr
-      [:td]
-      [:td]
-      [:td]
-      [:td "17.30 ojos de julia"]
-      [:td]]
-    [:tr
-      [:td]
-      [:td "19.00"]
-      [:td]
-      [:td]
-      [:td]]
-    [:tr
-      [:td]
-      [:td]
-      [:td]
-      [:td "19.30 ojos de julia"]
-      [:td]]
-    [:tr
-      [:td]
-      [:td "21.00"]
-      [:td]
-      [:td]
-      [:td]]
-    [:tr
-      [:td]
-      [:td]
-      [:td]
-      [:td "21.30 ojos de julia"]
-      [:td]]
-   [:tr
-      [:td "perjantai 25.2.2011"]
-      [:td "10.00"]
-      [:td]
-      [:td]
-      [:td]
-    [:tr
-      [:td]
-      [:td "10.45 lil fuckers"]
-      [:td [:div "12.15 inception"]
-           [:div "14.30 turisti"]]
-      [:td "10.00 kings speech"]
-      [:td]]
-    [:tr
-      [:td]
-      [:td "15.00"]
-      [:td]
-      [:td]
-      [:td]]
-    [:tr
-      [:td]
-      [:td]
-      [:td]
-      [:td "15.30 ojos de julia"]
-      [:td]]
-    [:tr
-      [:td]
-      [:td "17.00"]
-      [:td]
-      [:td]
-      [:td]]
-    [:tr
-      [:td]
-      [:td]
-      [:td]
-      [:td "17.30 ojos de julia"]
-      [:td]]
-    [:tr
-      [:td]
-      [:td "19.00"]
-      [:td]
-      [:td]
-      [:td]]
-    [:tr
-      [:td]
-      [:td]
-      [:td]
-      [:td "19.30 ojos de julia"]
-      [:td]]
-    [:tr
-      [:td]
-      [:td "21.00"]
-      [:td]
-      [:td]
-      [:td]]
-    [:tr
-      [:td]
-      [:td]
-      [:td]
-      [:td "21.30 ojos de julia"]
-      [:td]]]]])
+    (for [[day genres] movies-by-date]
+      (list [:tr
+              [:td (str day)]]
+            [:tr
+              [:td]
+              [:td {:colspan 4} "10.00"]]
+            [:tr
+              [:td]
+              (render-all-in-time-range genres 10 14)]
+            [:tr
+              [:td]
+              [:td {:colspan 4} "15.00"]]
+            [:tr
+              [:td]
+              (render-all-in-time-range genres 15 18)]
+            [:tr
+              [:td]
+              [:td {:colspan 4} "19.00"]]
+            [:tr
+              [:td]
+              (render-all-in-time-range genres 19 22)]
+            [:tr
+              [:td]
+              [:td {:colspan 4} "23.00"]]
+            [:tr
+              [:td]
+              (render-all-in-time-range genres 23 23)]))])
 
 (defn top-movies []
   [:table
