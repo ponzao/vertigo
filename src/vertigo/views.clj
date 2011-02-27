@@ -1,9 +1,6 @@
 (ns vertigo.views
-  (:require [vertigo.common :as common])
   (:use [hiccup.core]
-        [hiccup.page-helpers]
-        [clj-time.core :only (now)]
-        [clj-time.format]))
+        [hiccup.page-helpers]))
 
 (defn layout [& content]
   (html [:html
@@ -12,76 +9,172 @@
                     :content    "text/html; charset=utf-8"}]
             (include-css "/style.css")]
           [:body
-            [:div#content
-              content]]]))
+            [:div#content content]]]))
 
-(defn- render-show [show]
-  [:li (unparse (:hour-minute formatters) (parse (:time show)))
-       (link-to
-         (str "/movies/" (:event-id show)) 
-         (:title show))])
-
-(defn- render-shows [shows]
-  [:ul (map render-show shows)])
-
-(defn- shows-table [shows]
+(defn movie-calendar [movies-by-date]
   [:table
     [:tr
-      [:th "Date"]
-      [:th "Comedy"]
-      [:th "Action/Adventure/Sci-fi/Fantasy"]
-      [:th "Drama/Romance"]
-      [:th "Other"]]
-    (for [[day genres] shows]
-      [:tr
-        [:td day]
-        [:td (render-shows (:comedy genres))]
-        [:td (render-shows (:action genres))]
-        [:td (render-shows (:drama genres))]
-        [:td (render-shows (:other genres))]])])
+      [:th]
+      [:th "komedia"]
+      [:th "toiminta"]
+      [:th "draama"]
+      [:th "muut"]]
+    [:tr
+      [:td "torstai 24.2.2011"]
+      [:td "10.00"]
+      [:td]
+      [:td]
+      [:td]
+    [:tr
+      [:td]
+      [:td "10.45 lil fuckers"]
+      [:td [:div "12.15 inception"]
+           [:div "14.30 turisti"]]
+      [:td "10.00 kings speech"]
+      [:td]]
+    [:tr
+      [:td]
+      [:td "15.00"]
+      [:td]
+      [:td]
+      [:td]]
+    [:tr
+      [:td]
+      [:td]
+      [:td]
+      [:td "15.30 ojos de julia"]
+      [:td]]
+    [:tr
+      [:td]
+      [:td "17.00"]
+      [:td]
+      [:td]
+      [:td]]
+    [:tr
+      [:td]
+      [:td]
+      [:td]
+      [:td "17.30 ojos de julia"]
+      [:td]]
+    [:tr
+      [:td]
+      [:td "19.00"]
+      [:td]
+      [:td]
+      [:td]]
+    [:tr
+      [:td]
+      [:td]
+      [:td]
+      [:td "19.30 ojos de julia"]
+      [:td]]
+    [:tr
+      [:td]
+      [:td "21.00"]
+      [:td]
+      [:td]
+      [:td]]
+    [:tr
+      [:td]
+      [:td]
+      [:td]
+      [:td "21.30 ojos de julia"]
+      [:td]]
+   [:tr
+      [:td "perjantai 25.2.2011"]
+      [:td "10.00"]
+      [:td]
+      [:td]
+      [:td]
+    [:tr
+      [:td]
+      [:td "10.45 lil fuckers"]
+      [:td [:div "12.15 inception"]
+           [:div "14.30 turisti"]]
+      [:td "10.00 kings speech"]
+      [:td]]
+    [:tr
+      [:td]
+      [:td "15.00"]
+      [:td]
+      [:td]
+      [:td]]
+    [:tr
+      [:td]
+      [:td]
+      [:td]
+      [:td "15.30 ojos de julia"]
+      [:td]]
+    [:tr
+      [:td]
+      [:td "17.00"]
+      [:td]
+      [:td]
+      [:td]]
+    [:tr
+      [:td]
+      [:td]
+      [:td]
+      [:td "17.30 ojos de julia"]
+      [:td]]
+    [:tr
+      [:td]
+      [:td "19.00"]
+      [:td]
+      [:td]
+      [:td]]
+    [:tr
+      [:td]
+      [:td]
+      [:td]
+      [:td "19.30 ojos de julia"]
+      [:td]]
+    [:tr
+      [:td]
+      [:td "21.00"]
+      [:td]
+      [:td]
+      [:td]]
+    [:tr
+      [:td]
+      [:td]
+      [:td]
+      [:td "21.30 ojos de julia"]
+      [:td]]]]])
 
-(defn shows [shows]
-  (layout (shows-table shows)))
+(defn top-movies []
+  [:table
+    [:tr
+      [:td [:article "IMAGE" [:h1 "black swan"]]]
+      [:td "IMAGE" [:h1 "inception"]]
+      [:td "IMAGE" [:h1 "meet the fuckers"]]]
+    [:tr
+      [:td "IMAGE" [:h1 "rare exports"]]
+      [:td "IMAGE" [:h1 "harry potter"]]
+      [:td "IMAGE" [:h1 "the tourist"]]]
+    [:tr
+      [:td "IMAGE" [:h1 "king's speech"]]
+      [:td "IMAGE" [:h1 "los ojos de julia"]]
+      [:td "IMAGE" [:h1 "tron"]]]])
 
-(defn movie [movie]
-  (layout
-    [:div
-      [:img {:src (:image movie)}]
-      [:h1 (:title movie)]
-      [:p  (.getValue (:synopsis movie))]
-      [:ul (for [{theatre :theatre time :time} (:shows movie)]
-             [:li [:span time]
-                  [:span theatre]])]
-      [:script {:src "http://widgets.twimg.com/j/2/widget.js"}]
-      [:script "new TWTR.Widget({
-                  version: 2,
-                  type: 'search',
-                  search: '" (:original-title movie) "',
-                  interval: 6000,
-                  title: '',
-                  subject: '',
-                  width: 250,
-                  height: 300,
-                  theme: {
-                    shell: {
-                      background: '#8ec1da',
-                      color: '#ffffff'
-                    },
-                    tweets: {
-                      background: '#ffffff',
-                      color: '#444444',
-                      links: '#1985b5'
-                    }
-                  },
-                  features: {
-                    scrollbar: false,
-                    loop: true,
-                    live: true,
-                    hashtags: true,
-                    timestamp: true,
-                    avatars: true,
-                    toptweets: true,
-                    behavior: 'default'
-                  }
-                }).render().start();"]]))
+(defn viewed-movie []
+  [:table
+    [:tr
+      [:td "IMAGE"]]
+    [:tr
+      [:td [:h1 "black swan"]
+           [:p  "Black Swan on elokuva..."]]]])
+
+(defn movie-page [movies-by-date]
+  (layout (list [:table {:style "width: 100%;"}
+                  [:tr
+                    [:td [:h1 "KINOT.FI"]]
+                    [:td]]
+                  [:tr
+                    [:td (viewed-movie)]
+                    [:td (top-movies)]]
+                  [:tr
+                    [:td "TILAA BLAA BLAA BLAA"]
+                    [:td "DIGGAA MEITÄ FB:ssä"]]]
+                (movie-calendar movies-by-date))))
 
