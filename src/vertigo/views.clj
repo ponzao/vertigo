@@ -1,8 +1,10 @@
 (ns vertigo.views
   (:use [hiccup.core]
         [hiccup.page-helpers]
-        [clj-time.core]
-        [clj-time.format]))
+        [clj-time.core :only (now)]
+        [clj-time.format :only (formatters
+                                formatter
+                                unparse)]))
 
 (defn layout [title & page]
   (html (list [:!DOCTYPE {:html "HTML5"}] ; FIXME This is broken!
@@ -51,14 +53,13 @@
 
 (defn top-movies [movies]
   (let [partitioned-movies (partition-all 3 movies)]
-    [:table
-      (for [three-movies partitioned-movies]
-        [:tr
-          (for [movie three-movies]
-            [:td [:article [:img {:src (:small-image movie) :alt "Movie poster."}]
-                           [:header [:h1 (:title movie)]]]])])]))
+    (for [three-movies partitioned-movies]
+      [:ul
+        (for [movie three-movies]
+          [:li [:article [:img {:src (:small-image movie) :alt "Movie poster."}]
+                         [:header [:h1 (:title movie)]]]])])))
 
-(defn viewed-movie [movie]
+(defn selected-movie [movie]
   [:article
     [:img {:src (:large-image movie) :alt "Big movie poster."}]
     [:header [:h1 (:title movie)]]
@@ -68,7 +69,7 @@
   (layout
     "kinos"
     [:header [:h1 "kinos"]]
-    [:content (viewed-movie {:title       "The Tourist"
+    [:content [:section#selected-movie (selected-movie {:title       "The Tourist"
                              :large-image "http://media.finnkino.fi/1012/Event_7531/landscape_large/The_Tourist_670.jpg"
                              :synopsis    "Johnny Depp nähdään elokuvan The Tourist pääosassa amerikkalaisena turistina,
                                            jonka harmiton suhde ventovieraan naisen kanssa alkaa punoa romantiikan ja
@@ -79,8 +80,8 @@
                                            (Angelina Jolie) kanssa, jonka tapaaminen ei kuitenkaan ole silkkaa sattumaa.
                                            Heidän salamaromanssinsa etenee pikavauhtia Pariisin ja Venetsian upeissa
                                            maisemissa, mutta aivan yhtä nopeasti he saavat huomata tempautuneensa mukaan
-                                           vaaralliseen kissa ja hiiri -leikkiin."})
-              (top-movies [{:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}
+                                           vaaralliseen kissa ja hiiri -leikkiin."})]
+              [:section#top-movies (top-movies [{:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}
                            {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}
                            {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}
                            {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}
@@ -88,9 +89,9 @@
                            {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}
                            {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}
                            {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}
-                           {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}])
-              [:section "Tilaa uutiskirje!"]
-              [:section "Likee FB:ssä"]
-              (movie-calendar movies-by-date)]
+                           {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}])]
+              [:section#newsletter "Tilaa uutiskirje!"]
+              [:section#share "Likee FB:ssä"]
+              [:section#calendar (movie-calendar movies-by-date)]]
     [:footer]))
 

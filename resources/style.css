@@ -10,3 +10,34 @@ td {
 li {
   font-size: 0.70em;
 }
+
+#selected-movie {
+  float: left;
+  width: 48%;
+}
+
+#top-movies {
+  float: left;
+  width: 48%;
+}
+
+#top-movies ul {
+  float: left;
+}
+
+#newsletter {
+  clear: both;
+  float: left;
+  width: 48%
+}
+
+#share {
+  float: left;
+  width: 48%;
+}
+
+#calendar {
+  clear: both;
+  width: 100%;
+  float: left;
+}
