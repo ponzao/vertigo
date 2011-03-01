@@ -17,23 +17,29 @@
   (and (<= start obj)
        (<= obj   end)))
 
+(defn- parse-time [date-time]
+  (unparse (formatters :hour-minute) date-time))
+
+(defn- parse-date [date-time]
+  (unparse (formatter "d.M.yyyy") date-time))
+
 (defn- render-in-time-range [movies start end]
   [:ul
     (for [movie movies
            :when (-> (:time movie)
                      (.getHourOfDay)
                      (between? start end))]
-      [:li (unparse (formatters :hour-minute) (:time movie)) (:title movie))])])
+      [:li (parse-time (:time movie)) (:title movie)])])
 
 (defn- render-all-in-time-range [genres start end]
   (for [genre [:comedy :action :drama :others]]
     [:td (render-in-time-range (get genres genre) start end)]))
 
 (defn movie-calendar [movies-by-date]
-  [:table
+  [:table {:border 1}
     [:tr [:th] [:th "komedia"] [:th "toiminta"] [:th "draama"] [:th "muut"]]
     (for [[day genres] movies-by-date]
-      (list [:tr [:td {:colspan 4} (str day)]]
+      (list [:tr [:td {:colspan 5} (parse-date day)]]
             [:tr [:td] [:td {:colspan 4} "10.00"]]
             [:tr [:td] (render-all-in-time-range genres 10 14)]
             [:tr [:td] [:td {:colspan 4} "15.00"]]
