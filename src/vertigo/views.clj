@@ -57,17 +57,18 @@
       [:ul
         (for [movie three-movies]
           [:li [:article [:img {:src (:small-image movie) :alt "Movie poster."}]
-                         [:header [:h1 (:title movie)]]]])])))
+                         [:header [:h3 (:title movie)]]]])])))
 
 (defn selected-movie [movie]
   [:article
     [:img {:src (:large-image movie) :alt "Big movie poster."}]
-    [:header [:h1 (:title movie)]]
+    [:header [:h2 (:title movie)]]
     [:p (:synopsis movie)]])
     
 (defn movie-page [movies-by-date]
   (layout
     "kinos"
+    [:div#content-wrapper
     [:header [:h1 "kinos"]]
     [:content [:section#selected-movie (selected-movie {:title       "The Tourist"
                              :large-image "http://media.finnkino.fi/1012/Event_7531/landscape_large/The_Tourist_670.jpg"
@@ -92,6 +93,6 @@
                            {:title "Black Swan" :small-image "http://media.finnkino.fi/1012/Event_7560/portrait_large/Black_Swan_99a.jpg"}])]
               [:section#newsletter "Tilaa uutiskirje!"]
               [:section#share "Likee FB:ssä"]
-              [:section#calendar (movie-calendar movies-by-date)]]
+              [:section#calendar (movie-calendar movies-by-date)]]]
     [:footer]))
 
