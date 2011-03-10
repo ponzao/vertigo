@@ -13,11 +13,22 @@
                    (update-in movie [:released] to-long))))
 
 (defn get-movie [id]
-  (-> {}
-      (merge (ds/retrieve Movie id))
+  (-> (ds/retrieve Movie id)
       (update-in [:released] from-long)))
 
 (defn get-movies-sorted-by-release []
   (ds/query :kind Movie
             :sort :released))
 
+(ds/defentity Event [])
+
+(defn save-event [event]
+  (ds/save! (merge (Event.)
+                   (update-in event [:date] to-long))))
+
+(defn retrieve-events-between-dates [start-date end-date]
+  (->> (ds/query :kind Event
+                 :filter [(>= :date (to-long start-date))
+                          (<  :date (to-long end-date))])
+       (map #(update-in % [:date] from-long))))
+  
