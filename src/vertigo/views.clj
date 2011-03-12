@@ -82,3 +82,14 @@
           [:tr [:td#calendar {:colspan 2} (movie-calendar movies-by-date)]]]]
       [:footer]]))
 
+(defn group-by-genre [events]
+  (group-by
+    (fn [{genres :genres}]
+      (cond (and (some #{"Comedy"} genres)
+                 (some #{"Drama"} genres)) :drama
+            (some #{"Comedy"} genres) :comedy
+            (some #{"Action" "Sci-fi" "Adventure" "Fantasy"} genres) :action
+            (some #{"Drama" "Romance"} genres) :drama
+            :otherwise :other))
+    events))
+

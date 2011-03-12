@@ -38,7 +38,11 @@
      {:id 2
       :title "The Tourist"
       :genre "Action"
-      :date (date-time 2011 1 2 11)}]))
+      :date (date-time 2011 1 2 11)}
+     {:id 3
+      :title "Los Ojos de Julia"
+      :genre "Horror"
+      :date (date-time 2011 1 3 18)}]))
 
 (defn database-fixture [f]
   (doseq [movie movies]
@@ -62,3 +66,4 @@
   (is (= (list (first events))
          (repository/retrieve-events-between-dates (date-time 2011 1 1 9)
                                                    (date-time 2011 1 1 13)))))
+

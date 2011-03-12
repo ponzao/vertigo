@@ -31,4 +31,4 @@
                  :filter [(>= :date (to-long start-date))
                           (<  :date (to-long end-date))])
        (map #(update-in % [:date] from-long))))
-  
+
