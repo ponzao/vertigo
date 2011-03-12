@@ -10,15 +10,15 @@
 
 (defn save-movie [movie]
   (ds/save! (merge (Movie.)
-                   (update-in movie [:released] to-long))))
+                   (update-in movie [:release-date] to-long))))
 
 (defn get-movie [id]
   (-> (ds/retrieve Movie id)
-      (update-in [:released] from-long)))
+      (update-in [:release-date] from-long)))
 
 (defn get-movies-sorted-by-release []
   (ds/query :kind Movie
-            :sort :released))
+            :sort :release-date))
 
 (ds/defentity Event [])
 

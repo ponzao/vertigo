@@ -39,10 +39,21 @@
   (for [genre [:comedy :action :drama :others]]
     [:td (render-in-time-range (get genres genre) start end)]))
 
-(defn movie-calendar [movies-by-date]
+(defn group-by-genre [events]
+  (group-by
+    (fn [{genres :genres}]
+      (cond (and (some #{"Comedy"} genres)
+                 (some #{"Drama"} genres)) :drama
+            (some #{"Comedy"} genres) :comedy
+            (some #{"Action" "Sci-fi" "Adventure" "Fantasy"} genres) :action
+            (some #{"Drama" "Romance"} genres) :drama
+            :otherwise :other))
+    events))
+
+(defn event-calendar [events-by-date]
   [:table
-    [:tr [:th] [:th "komedia"] [:th "toiminta"] [:th "draama"] [:th "muut"]]
-    (for [[day genres] movies-by-date]
+    [:tr [:th] [:th "Komedia"] [:th "Toiminta"] [:th "Draama"] [:th "Muut"]]
+    (for [[day genres] (group-by-genre events-by-date)]
       (list [:tr [:td {:colspan 5} (parse-date day)]]
             [:tr [:td] [:td {:colspan 4} "10.00"]]
             [:tr [:td] (render-all-in-time-range genres 10 14)]
@@ -53,7 +64,7 @@
             [:tr [:td] [:td {:colspan 4} "23.00"]]
             [:tr [:td] (render-all-in-time-range genres 23 23)]))])
 
-(defn top-movies [movies]
+(defn newest-movies [movies]
   (html
     [:table
       (let [partitioned-movies (partition-all 3 movies)]
@@ -70,26 +81,15 @@
       [:header [:h2 (:title movie)]]
       [:p (:synopsis movie)]]))
     
-(defn movie-page [movies-by-date]
+(defn movie-page [events-by-date]
   (layout
     "kinos"
     [:div#content-wrapper
       [:header [:h1 "kinos"]]
       [:content
         [:table
-          [:tr [:td#selected-movie ""] [:td#top-movies ""]]
+          [:tr [:td#selected-movie ""] [:td#newest-movies ""]]
           [:tr [:td#newsletter "Tilaa uutiskirje!"] [:td#share "Likee FB:ssä"]]
-          [:tr [:td#calendar {:colspan 2} (movie-calendar movies-by-date)]]]]
+          [:tr [:td#calendar {:colspan 2} (event-calendar events-by-date)]]]]
       [:footer]]))
-
-(defn group-by-genre [events]
-  (group-by
-    (fn [{genres :genres}]
-      (cond (and (some #{"Comedy"} genres)
-                 (some #{"Drama"} genres)) :drama
-            (some #{"Comedy"} genres) :comedy
-            (some #{"Action" "Sci-fi" "Adventure" "Fantasy"} genres) :action
-            (some #{"Drama" "Romance"} genres) :drama
-            :otherwise :other))
-    events))
 
