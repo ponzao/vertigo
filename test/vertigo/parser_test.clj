@@ -58,17 +58,69 @@
      </Event>
    </Events>")
 
+(def events-string
+  "<Schedule xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">
+     <PubDate>2011-03-13T00:00:00+02:00</PubDate>
+     <Shows>
+       <Show>
+         <ID>176890</ID>
+         <dttmShowStart>2011-03-12T10:45:00</dttmShowStart>
+         <EventID>298518</EventID>
+         <Title>Gnomeo &amp; Julia (dub)</Title>
+         <OriginalTitle>Gnomeo &amp; Juliet (dub)</OriginalTitle>
+         <ProductionYear>2011</ProductionYear>
+         <LengthInMinutes>85</LengthInMinutes>
+         <dtLocalRelease>2011-03-04T00:00:00</dtLocalRelease>
+         <Rating>S</Rating>
+         <RatingLabel>S</RatingLabel>
+         <RatingImageUrl>https://media.finnkino.fi/images/rating_large_S.png</RatingImageUrl>
+         <Genres>Seikkailu, Animaatio, Komedia</Genres>
+         <TheatreID>1034</TheatreID>
+         <TheatreAuditriumID>1266</TheatreAuditriumID>
+         <Theatre>Kinopalatsi Helsinki</Theatre>
+         <TheatreAuditorium>sali 9</TheatreAuditorium>
+         <TheatreAndAuditorium>Kinopalatsi Helsinki, sali 9</TheatreAndAuditorium>
+         <PresentationMethodAndLanguage>suomi</PresentationMethodAndLanguage>
+         <PresentationMethod />
+         <EventSeries />
+         <ShowURL>http://www.finnkino.fi/Websales/Show/176890/</ShowURL>
+         <EventURL>http://www.finnkino.fi/Event/298518/</EventURL>
+         <Images>
+           <EventSmallImagePortrait>http://media.finnkino.fi/1012/Event_7656/portrait_small/Gnomeo_Juliet_99.jpg</EventSmallImagePortrait>
+           <EventLargeImagePortrait>http://media.finnkino.fi/1012/Event_7656/portrait_large/Gnomeo_Juliet_99.jpg</EventLargeImagePortrait>
+           <EventSmallImageLandscape>http://media.finnkino.fi/1012/Event_7656/landscape_small/Gnomeo_Juliet_670.jpg</EventSmallImageLandscape>
+           <EventLargeImageLandscape>http://media.finnkino.fi/1012/Event_7656/landscape_large/Gnomeo_Juliet_670.jpg</EventLargeImageLandscape>
+         </Images>
+       </Show>
+     </Shows>
+   </Schedule>")
+
+(defn- are-these-fields-present? [m & keys]
+  (->> m
+       ((apply juxt keys))
+       (every? identity)))
+ 
+
 (deftest Movie-XML-Has-These-Fields-Parsed
-  (is (->> (parser/parse-movies movies-string)
+  (is (-> (parser/parse-movies movies-string)
           first
-          ((juxt
-            :id
-            :title
-            :original-title
-            :synopsis
-            :large-image-url
-            :small-image-url
-            :trailer-url
-            :release-date))
-          (every? identity))))
+          (are-these-fields-present? :id
+                                     :title
+                                     :original-title
+                                     :synopsis
+                                     :large-image-url
+                                     :small-image-url
+                                     :trailer-url
+                                     :release-date))))
+
+(deftest Events-XML-Has-These-Fields-Parsed
+  (is (-> (parser/parse-events events-string)
+          first
+          (are-these-fields-present? :id
+                                     :title
+                                     :original-title
+                                     :theatre
+                                     :date
+                                     :genres))))
+
 

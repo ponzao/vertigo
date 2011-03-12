@@ -12,11 +12,11 @@
 (defn parse-events [s]
   (let [xz (zip-string s)]
     (for [show (xml-> xz :Shows :Show)]
-      {:event-id (xml1-> show :EventID text)
+      {:id (xml1-> show :EventID text)
        :title (xml1-> show :Title text)
        :original-title (xml1-> show :OriginalTitle text)
        :theatre (xml1-> show :TheatreAndAuditorium text)
-       :time (xml1-> show :dttmShowStart text)
+       :date (xml1-> show :dttmShowStart text)
        :day (str (.toLocalDate (parse (xml1-> show :dttmShowStart text))))
        :genres (into #{} (split (xml1-> show :Genres text) #", "))
        :image (xml1-> show :Images :EventLargeImagePortrait text)})))
@@ -32,5 +32,4 @@
        :large-image-url (xml1-> movie :Images :EventLargeImageLandscape text)
        :small-image-url (xml1-> movie :Images :EventLargeImagePortrait text)
        :release-date (parse (xml1-> movie :dtLocalRelease text))})))
-
 

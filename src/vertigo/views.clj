@@ -71,13 +71,13 @@
         (for [three-movies partitioned-movies]
           [:tr
             (for [movie three-movies]
-              [:td [:img {:src (:small-image movie) :alt "Movie poster."}]
+              [:td [:img {:src (:small-image-url movie) :alt "Movie poster."}]
                    [:header [:h3 (:title movie)]]])]))]))
 
 (defn selected-movie [movie]
   (html
     [:div
-      [:img {:src (:large-image movie) :alt "Big movie poster."}]
+      [:img {:src (:large-image-url movie) :alt "Big movie poster."}]
       [:header [:h2 (:title movie)]]
       [:p (:synopsis movie)]]))
     
