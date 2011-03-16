@@ -16,7 +16,7 @@
        :title (xml1-> show :Title text)
        :original-title (xml1-> show :OriginalTitle text)
        :theatre (xml1-> show :TheatreAndAuditorium text)
-       :date (xml1-> show :dttmShowStart text)
+       :date (parse (xml1-> show :dttmShowStart text))
        :day (str (.toLocalDate (parse (xml1-> show :dttmShowStart text))))
        :genres (into #{} (split (xml1-> show :Genres text) #", "))
        :image (xml1-> show :Images :EventLargeImagePortrait text)})))
