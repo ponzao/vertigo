@@ -29,42 +29,42 @@
 
 (defn- render-in-time-range [movies start end]
   [:ul
-    (for [movie movies
-           :when (-> (:date movie)
-                     (.getHourOfDay)
-                     (between? start end))]
-      [:li (parse-time (:date movie)) (:title movie)])])
+    (for [movie movies]
+;           :when (-> (:date movie)
+;                     (.getHourOfDay)
+;                     (between? start end))]
+      [:li (parse-time (:date movie)) (:title movie) "single"])])
 
 (defn- render-all-in-time-range [genres start end]
   (for [genre [:comedy :action :drama :others]]
-    [:td (render-in-time-range (get genres genre) start end)]))
+    [:td (render-in-time-range (get genres genre) start end) (type genres)]))
 
 (defn group-by-genre [events]
   (group-by
     (fn [{genres :genres}]
-      (cond (and (some #{"Comedy"} genres)
-                 (some #{"Drama"} genres)) :drama
-            (some #{"Comedy"} genres) :comedy
-            (some #{"Action" "Sci-fi" "Adventure" "Fantasy"} genres) :action
-            (some #{"Drama" "Romance"} genres) :drama
+      (cond (and (some #{"Komedia"} genres)
+                 (some #{"Draama"} genres)) :drama
+            (some #{"Komedia"} genres) :comedy
+            (some #{"Toiminta" "Sci-fi" "Seikkailu" "Fantasia"} genres) :action
+            (some #{"Draama" "Romanssi"} genres) :drama
             :otherwise :other))
     events))
 
+      ;(str (:date (first (:comedy (group-by-genre events))))))])
 (defn event-calendar [events-by-date]
   [:table
-    [:tr [:th] [:th "Komedia"] [:th "Toiminta"] [:th "Draama"] [:th "Muut"]]
     (for [[day events] events-by-date]
-      (for [genres (group-by-genre events)]
-        genres))])
-;        (list [:tr [:td {:colspan 5} (parse-date day)]]
-;              [:tr [:td] [:td {:colspan 4} "10.00"]]
-;              [:tr [:td] (render-all-in-time-range genres 10 14)]
-;              [:tr [:td] [:td {:colspan 4} "15.00"]]
-;              [:tr [:td] (render-all-in-time-range genres 15 18)]
-;              [:tr [:td] [:td {:colspan 4} "19.00"]]
-;              [:tr [:td] (render-all-in-time-range genres 19 22)]
-;              [:tr [:td] [:td {:colspan 4} "23.00"]]
-;              [:tr [:td] (render-all-in-time-range genres 23 23)])))])
+      (list [:tr [:td {:colspan 5} (parse-date day)]]
+        (for [genres (group-by-genre events)]
+          (list
+            [:tr [:td] [:td {:colspan 4} "10.00"]]
+            [:tr [:td] (render-all-in-time-range genres 10 14)]
+            [:tr [:td] [:td {:colspan 4} "15.00"]]
+            [:tr [:td] (render-all-in-time-range genres 15 18)]
+            [:tr [:td] [:td {:colspan 4} "19.00"]]
+            [:tr [:td] (render-all-in-time-range genres 19 22)]
+            [:tr [:td] [:td {:colspan 4} "23.00"]]
+            [:tr [:td] (render-all-in-time-range genres 23 23)]))))])
 
 (defn newest-movies [movies]
   (html
