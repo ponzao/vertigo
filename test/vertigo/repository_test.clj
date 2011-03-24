@@ -63,7 +63,7 @@
          (map :id (repository/get-movies-sorted-by-release)))))
 
 (deftest Retrieve-Events-Between-Dates
-  (is (= (list (first events))
+  (is (= (list [(date-time 2011 1 1) [(first events)]])
          (repository/retrieve-events-between-dates (date-time 2011 1 1 9)
                                                    (date-time 2011 1 1 13)))))
 
