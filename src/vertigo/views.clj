@@ -29,15 +29,15 @@
 
 (defn- render-in-time-range [movies start end]
   [:ul
-    (for [movie movies]
-;           :when (-> (:date movie)
-;                     (.getHourOfDay)
-;                     (between? start end))]
-      [:li (parse-time (:date movie)) (:title movie) "single"])])
+    (for [movie movies
+           :when (-> (:date movie)
+                     (.getHourOfDay)
+                     (between? start end))]
+      [:li (parse-time (:date movie)) (:title movie)])])
 
 (defn- render-all-in-time-range [genres start end]
   (for [genre [:comedy :action :drama :others]]
-    [:td (render-in-time-range (get genres genre) start end) (type genres)]))
+    [:td (render-in-time-range (get genres genre) start end)]))
 
 (defn group-by-genre [events]
   (group-by
@@ -50,12 +50,11 @@
             :otherwise :other))
     events))
 
-      ;(str (:date (first (:comedy (group-by-genre events))))))])
 (defn event-calendar [events-by-date]
   [:table
     (for [[day events] events-by-date]
       (list [:tr [:td {:colspan 5} (parse-date day)]]
-        (for [genres (group-by-genre events)]
+        (let [genres (group-by-genre events)]
           (list
             [:tr [:td] [:td {:colspan 4} "10.00"]]
             [:tr [:td] (render-all-in-time-range genres 10 14)]

@@ -8,7 +8,7 @@
 
 (defroutes handler
   (GET "/helsinki" [] 
-    (let [start-date (.plusDays (now) 1)
+    (let [start-date (now)
           end-date   (.plusDays start-date 7)]
       (views/movie-page 
         (repository/retrieve-events-between-dates start-date end-date))))

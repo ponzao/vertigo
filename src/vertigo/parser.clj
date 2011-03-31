@@ -26,7 +26,8 @@
       {:id (xml1-> movie :ID text)
        :title (xml1-> movie :Title text)
        :original-title (xml1-> movie :OriginalTitle text)
-       :synopsis (xml1-> movie :Synopsis text)
+       ; FIXME
+       ; :synopsis (xml1-> movie :Synopsis text)
        :trailer-url (xml1-> movie :Videos :EventVideo :Location text)
        :large-image-url (xml1-> movie :Images :EventLargeImageLandscape text)
        :small-image-url (xml1-> movie :Images :EventLargeImagePortrait text)

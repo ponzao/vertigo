@@ -14,7 +14,7 @@
                    (update-in movie [:release-date] to-long))))
 
 (defn save-movies [movies]
-  (map save-movie movies))
+  (doseq [movie movies] (save-movie movie)))
 
 (defn get-movie [id]
   (-> (ds/retrieve Movie id)
@@ -32,7 +32,7 @@
 
 ; FIXME Not tested
 (defn save-events [events]
-  (map save-event events))
+  (doseq [event events] (save-event event)))
 
 (defn retrieve-events-between-dates [start-date end-date]
   (->> (ds/query :kind Event

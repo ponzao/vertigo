@@ -14,6 +14,6 @@
       (parser/parse-movies (finnkino/retrieve-movies))))
 
 (defn update []
-  (and (update-movies)
-       (update-events)))
+  (update-movies)
+  (update-events))
 

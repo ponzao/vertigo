@@ -10,5 +10,5 @@
                                               javax.jms/jms
                                               com.sun.jdmk/jmxtools
                                               com.sun.jmx/jmxri]]]
-  :dev-dependencies [[appengine-magic "0.3.4"]])
+  :dev-dependencies [[appengine-magic "0.4.0"]])
 
