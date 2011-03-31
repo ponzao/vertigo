@@ -4,7 +4,7 @@
     $.ajax({
       url: '/movies',
       success: function(result) {
-                 $('#top-movies').prepend($(result));
+                 $('#newest-movies').prepend($(result));
                }
     });
 

@@ -2,9 +2,11 @@
   (:require [vertigo.views :as views]
             [appengine-magic.core :as ae]
             [vertigo.repository :as repository]
-            [vertigo.batch :as batch])
+            [vertigo.batch :as batch]
+            [compojure.route :as route])
   (:use     [compojure.core]
-            [clj-time.core :only (now)]))
+            [clj-time.core :only (now)]
+            [ring.middleware.reload]))
 
 (defroutes handler
   (GET "/helsinki" [] 
@@ -17,7 +19,8 @@
   (GET "/movies/:id" [id]
     (views/selected-movie (repository/get-movie id)))
   (GET "/admin" []
-    (batch/update)))
+    (batch/update))
+  (route/resources "/"))
 
-(ae/def-appengine-app vertigo-app #'handler)
+(ae/def-appengine-app vertigo-app (wrap-reload #'handler '(vertigo.core)))
 
