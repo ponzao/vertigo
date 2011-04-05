@@ -2,7 +2,8 @@
   (:require [vertigo.repository :as repository]
             [vertigo.finnkino :as finnkino]
             [vertigo.parser :as parser])
-  (:use [clj-time.core :only (now)]))
+  (:use [clj-time.core :only (now)]
+        [clj-time.format]))
 
 (defn- update-events []
   (for [date (take 8 (iterate #(.plusDays % 1) (now)))]
