@@ -6,7 +6,7 @@
             [compojure.route :as route])
   (:use     [compojure.core]
             [clj-time.core :only (now)]
-            [ring.middleware.reload]))
+            [ring.middleware reload stacktrace]))
 
 (defroutes handler
   (GET "/helsinki" [] 
@@ -22,7 +22,9 @@
     (batch/update))
   (route/resources "/"))
 
-(ae/def-appengine-app vertigo-app (wrap-reload #'handler '(vertigo.core)))
+(ae/def-appengine-app vertigo-app
+  (wrap-stacktrace
+   (wrap-reload #'handler '(vertigo.core))))
 
 
 
